@@ -42,7 +42,7 @@ export default class Home extends Component {
   }
   download() {
     axios({
-      url: "http://localhost:9090/download/" + this.state.currentFileName,
+      url: "/download/" + this.state.currentFileName,
       method: 'GET',
       responseType: 'blob',
     }).then((response) => {
@@ -62,7 +62,7 @@ export default class Home extends Component {
     formData.append("file", this.state.currentFile);
     formData.append("password", this.state.password);
     formData.append("mode", this.state.mode);
-    axios.post("http://localhost:9090/upload-file",
+    axios.post("/upload-file",
       formData
     )
       .then((response) => {
