@@ -9,12 +9,10 @@ export default class Home extends Component {
       currentFile: undefined,
       password: "thisismypassword",
       mode: "dec",
-      response: "",
       isUploaded: false,
     };
     this.selectFile = this.selectFile.bind(this);
     this.upload = this.upload.bind(this);
-    this.download = this.download.bind(this);
     this.setMode = this.setMode.bind(this);
     this.setPassword = this.setPassword.bind(this);
   }
@@ -40,36 +38,27 @@ export default class Home extends Component {
       mode: e.target.value,
     })
   }
-  download() {
-    axios({
-      url: "/download/" + this.state.currentFileName,
-      method: 'GET',
-      responseType: 'blob',
-    }).then((response) => {
-      const href = URL.createObjectURL(response.data);
-      const link = document.createElement('a');
-      link.href = href;
-      link.setAttribute('download', this.state.currentFileName);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(href);
-    });
-  }
   upload(event) {
     event.preventDefault();
     let formData = new FormData();
     formData.append("file", this.state.currentFile);
     formData.append("password", this.state.password);
     formData.append("mode", this.state.mode);
-    axios.post("/upload-file",
-      formData
-    )
+    axios({
+      url: "https://secureshare-sharing.herokuapp.com/upload-file",
+      method: 'POST',
+      responseType: 'blob',
+      data: formData,
+    })
       .then((response) => {
-        this.setState({
-          response: response,
-          isUploaded: true,
-        });
+        const href = URL.createObjectURL(response.data);
+        const link = document.createElement('a');
+        link.href = href;
+        link.setAttribute('download', this.state.currentFileName);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(href);
       });
     this.setState({
       currentFile: undefined,
@@ -93,11 +82,11 @@ export default class Home extends Component {
           </select>
         </label>
         <button className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded" onClick={this.upload}>
-          Upload
+          Encrypt/Decrypt
         </button>
-        <button className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded" onClick={this.download}>
+        {/* <button className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded" onClick={this.download}>
           Download
-        </button>
+        </button> */}
         <div>
           {uploaded}
         </div>
